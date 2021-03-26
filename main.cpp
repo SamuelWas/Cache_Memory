@@ -1,6 +1,7 @@
 #include <iostream>
 #include <math.h>
 #include <vector>
+#include <bitset>
 #include "headers/block.h"
 #include "headers/cache.h"
 
@@ -9,6 +10,10 @@
 
 int binaryToDecimal(std::string binaryNumber) {
     return std::stoi(binaryNumber, 0, 2);
+}
+
+std::string decimalToBinary(int decimal) {
+    return std::bitset<WORD_SIZE>(decimal).to_string();
 }
 
 int main() {
@@ -25,12 +30,12 @@ int main() {
 
         std::string response;
         if (operacao == 0) {
-            response = cache.read(endereco);
+            response = cache.read(decimalToBinary(endereco));
             std::cout << endereco << " " << operacao << " " + response << std::endl;
         }
         else {
             std::cin >> dado;
-            cache.write(endereco, dado);
+            response = cache.write(decimalToBinary(endereco), dado);
             std::cout << endereco << " " << operacao << " " +  dado + " " + response << std::endl;
         }
 

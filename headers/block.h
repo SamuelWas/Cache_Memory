@@ -1,7 +1,7 @@
 class Block {
 public:
     Block() {
-        valid = -1;
+        valid = 0;
         tag = "empty";
         data = "empty";
     }

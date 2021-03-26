@@ -14,12 +14,15 @@ public:
         tagSize =  BLOCKS_BITS - indexSize - offsetSize;
     }
     
-    std::string read(int endereco);
-    std::string write(int endereco, std::string dado);
+    std::string read(std::string endereco);
+    std::string write(std::string endereco, std::string dado);
 
     int indexSize;
     int offsetSize;
     int tagSize;
+
+    std::string getIndex(std::string endereco);
+    int binaryToDecimal(std::string binaryNumber);
 
     void print();
 
@@ -28,8 +31,11 @@ public:
     int misses;
 };
 
-std::string Cache::read(int endereco) {
-    if (!blocks[endereco].valid) {
+std::string Cache::read(std::string endereco) {
+    std::string index = getIndex(endereco);
+    int indexDecimal = binaryToDecimal(index);
+
+    if (!blocks[indexDecimal].valid) {
         misses++;
         return "MISS";
     }
@@ -38,14 +44,25 @@ std::string Cache::read(int endereco) {
 
 }
 
-std::string Cache::write(int endereco, std::string dado) {
-    if (!blocks[endereco].valid) {
-        blocks[endereco].valid = 1;
-        blocks[endereco].data = dado;
+std::string Cache::write(std::string endereco, std::string dado) {
+    std::string index = getIndex(endereco);
+    int indexDecimal = binaryToDecimal(index);
+
+    if (!blocks[indexDecimal].valid) {
+        blocks[indexDecimal].valid = 1;
+        blocks[indexDecimal].data = dado;
         return "W";
     }
-    return "Memory occupied!";
+    return "Another value on block, need to write-back!";
 
+}
+
+std::string Cache::getIndex(std::string endereco) {
+    return endereco.substr(tagSize, indexSize);
+}
+
+int Cache::binaryToDecimal(std::string binaryNumber) {
+    return std::stoi(binaryNumber, 0, 2);
 }
 
 void Cache::print() {
