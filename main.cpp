@@ -2,41 +2,13 @@
 #include <math.h>
 #include <vector>
 #include "block.h"
+#include "cache.h"
 
 #define MEM_WORDS 4096
 #define WORD_SIZE 32
 
-#define BLOCKS 256
-#define BLOCKS_WORDS 4
-#define BLOCKS_BITS 32
-
 int binaryToDecimal(std::string binaryNumber) {
     return std::stoi(binaryNumber, 0, 2);
-}
-
-int getIndexSize() {
-    return log2(BLOCKS);
-}
-
-int getOffsetSize() {
-    return log2(BLOCKS_WORDS) + 2;
-}
-
-int getTagSize() {
-    return BLOCKS_BITS - getIndexSize() - getOffsetSize();
-}
-
-void printVector2D(std::vector<Block> vector) {
-    for (int i = 0; i < vector.size(); i++) {
-        std::cout << "index " << i << ": [ ";
-        std::cout << vector[i].visited << " " + vector[i].tag + " " + vector[i].data << " ";
-        std::cout << "]" << std::endl;
-    }
-}
-
-void read(int endereco, std::vector<Block> blocks) {
-    if (blocks[endereco].visited != -1) std::cout << "Hit" << std::endl;
-    if (blocks[endereco].visited == -1) std::cout << "Miss" << std::endl;
 }
 
 int main() {
@@ -48,11 +20,12 @@ int main() {
     std::cin >> operacao;
     std::cin >> dado;
 
-    std::vector<Block> blocks(BLOCKS);
+    Cache cache;
 
-    // printVector2D(kblocks);
-    if (operacao == 0) read(endereco, blocks);
+    if (operacao == 0) cache.read(endereco);
     // else write(endereco, dado)
+
+    // cache.print();
     // std::cout << getTagSize() << getIndexSize() << getOffsetSize() << std::endl;
     // std::cout << endereco << operacao << dado << std::endl; 
     return 0;

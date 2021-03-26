@@ -1,11 +1,11 @@
 class Block {
 public:
     Block() {
-        visited = -1;
+        valid = -1;
         tag = "empty";
         data = "empty";
     }
-    int visited;
+    int valid;
     std::string tag;
     std::string data;
 };
