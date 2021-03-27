@@ -1,11 +1,15 @@
+#define BLOCKS_WORDS 4
+
 class Block {
 public:
     Block() {
         valid = 0;
         tag = "empty";
-        data = "empty";
+        words = std::vector<std::string> (BLOCKS_WORDS, "emptyCache");
+        offset = "empty";
     }
     int valid;
     std::string tag;
-    std::string data;
+    std::vector<std::string> words;
+    std::string offset;
 };
