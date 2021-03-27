@@ -2,13 +2,11 @@
 #include <math.h>
 #include <vector>
 #include <bitset>
+#include <fstream>
 #include "headers/block.h"
 #include "headers/cache.h"
 
 #define BLOCKS_BITS 12
-// #include "headers/memory.h"
-
-
 
 int binaryToDecimal(std::string binaryNumber) {
     return std::stoi(binaryNumber, 0, 2);
@@ -26,8 +24,12 @@ int main() {
     Cache cache(mem);
 
 
+    std::ofstream results;
+    results.open("results.txt",  std::ofstream::out | std::ofstream::trunc);
 
-    // 20 bits tag, 8 bits index, 4 bits offset
+    std::string result;
+
+    // 2 bits tag, 8 bits index, 2 bits offset
     std::cin >> endereco;
     do{
         std::cin >> operacao;
@@ -36,22 +38,25 @@ int main() {
         std::string response;
         if (operacao == 0) {
             response = cache.read(decimalToBinary(endereco));
-            std::cout << endereco << " " << operacao << " " + response << std::endl;
+            result += std::to_string(endereco) + " " + std::to_string(operacao) + " " + response + "\n";
         }
-        else {
+        if (operacao == 1) {
             std::cin >> dado;
             response = cache.write(decimalToBinary(endereco), dado);
-            std::cout << endereco << " " << operacao << " " +  dado + " " + response << std::endl;
+            result += std::to_string(endereco) + " " + std::to_string(operacao) + " " + dado + " " + response + "\n";
         }
-
-        
-
-        // else write(endereco, dado)
-
-        // cache.print();
-        // std::cout << getTagSize() << getIndexSize() << getOffsetSize() << std::endl;
-
     } while (std::cin >> endereco);
     // cache.print();
+
+    results << "READS: " << cache.reads << std::endl;
+    results << "WRITES: " << cache.writes << std::endl;
+    results << "HITS: " << cache.hits << std::endl;
+    results << "MISSES: " << cache.misses << std::endl;
+    results << "HIT RATE: " << float(cache.hits) / float(cache.reads) << std::endl;
+    results << "MISS RATE: " << float(cache.misses) / float(cache.reads) << std::endl;
+    results << std::endl;
+    results << result;
+
+    results.close();
     return 0;
 }

@@ -40,6 +40,8 @@ public:
     std::vector<Block> blocks;
     int hits;
     int misses;
+    int reads;
+    int writes;
 };
 
 std::string Cache::read(std::string endereco) {
@@ -49,11 +51,13 @@ std::string Cache::read(std::string endereco) {
 
     if (blocks[indexDecimal].valid && blocks[indexDecimal].tag == tag) {
         hits++;
+        reads++;
         return "HIT";
     }
 
-    misses++;
     readFromMemory(endereco);
+    misses++;
+    reads++;
     return "MISS";
 }
 
@@ -80,6 +84,7 @@ std::string Cache::write(std::string endereco, std::string dado) {
     if(blocks[indexDecimal].dirty) writeBack(endereco, dado);
 
     blocks[indexDecimal].write(tag, offsetDecimal, dado);
+    writes++;
     return "W";
 }
 
