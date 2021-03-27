@@ -1,6 +1,6 @@
+#include <math.h>
 #define MEM_WORDS 4096
 #define WORD_SIZE 32
-#include <math.h>
 class Memory {
 public:
     Memory() {
@@ -9,6 +9,7 @@ public:
     }
 
     std::string read(std::string endereco);
+    void write(std::string endereco, std::string dado);
     int binaryToDecimal(std::string binaryNumber);
 
     std::vector<std::string> blocks;
@@ -17,6 +18,10 @@ public:
 
 std::string Memory::read(std::string endereco) {
     return blocks[binaryToDecimal(endereco)];
+}
+
+void Memory::write(std::string endereco, std::string dado) {
+    blocks[binaryToDecimal(endereco)] = dado;
 }
 
 int Memory::binaryToDecimal(std::string binaryNumber) {

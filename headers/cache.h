@@ -21,10 +21,11 @@ public:
     std::string read(std::string endereco);
     void readFromMemory(std::string endereco);
     std::string write(std::string endereco, std::string dado);
+    void writeBack(std::string endereco, std::string dado);
 
-    std::string getIndex(std::string endereco);
-    std::string getOffset(std::string endereco);
-    std::string getTag(std::string endereco);
+    std::string parseIndex(std::string endereco);
+    std::string parseOffset(std::string endereco);
+    std::string parseTag(std::string endereco);
 
     int binaryToDecimal(std::string binaryNumber);
     std::string decimalToBinary(int decimal);
@@ -42,20 +43,23 @@ public:
 };
 
 std::string Cache::read(std::string endereco) {
-    std::string index = getIndex(endereco);
+    std::string index = parseIndex(endereco);
+    std::string tag = parseTag(endereco);
     int indexDecimal = binaryToDecimal(index);
-    if (!blocks[indexDecimal].valid) {
-        misses++;
-        readFromMemory(endereco);
-        return "MISS";
+
+    if (blocks[indexDecimal].valid && blocks[indexDecimal].tag == tag) {
+        hits++;
+        return "HIT";
     }
-    hits++;
-    return "HIT";
+
+    misses++;
+    readFromMemory(endereco);
+    return "MISS";
 }
 
 void Cache::readFromMemory(std::string endereco) {
-    std::string index = getIndex(endereco);
-    std::string tag = getTag(endereco);
+    std::string index = parseIndex(endereco);
+    std::string tag = parseTag(endereco);
     int indexDecimal = binaryToDecimal(index);
 
     for (int wordOffset = 0; wordOffset < BLOCKS_WORDS; wordOffset++) {
@@ -66,29 +70,36 @@ void Cache::readFromMemory(std::string endereco) {
 }
 
 std::string Cache::write(std::string endereco, std::string dado) {
-    // std::string index = getIndex(endereco);
-    // int indexDecimal = binaryToDecimal(index);
+    std::string index = parseIndex(endereco);
+    std::string tag = parseTag(endereco);
+    std::string offset = parseOffset(endereco);
 
-    // if (!blocks[indexDecimal].valid) {
-    //     blocks[indexDecimal].valid = 1;
-    //     blocks[indexDecimal].data = dado;
-    //     return "W";
-    // }
-    return "Write not implemented";
+    int indexDecimal = binaryToDecimal(index);
+    int offsetDecimal = binaryToDecimal(offset);
 
+    if(blocks[indexDecimal].dirty) writeBack(endereco, dado);
+
+    blocks[indexDecimal].write(tag, offsetDecimal, dado);
+    return "W";
 }
 
-std::string Cache::getIndex(std::string endereco) {
+void Cache::writeBack(std::string endereco, std::string dado) {
+    memory.write(endereco, dado);
+    std::string index = parseIndex(endereco);
+    int indexDecimal = binaryToDecimal(index);
+    blocks[indexDecimal].dirty = 0;
+}
+
+std::string Cache::parseIndex(std::string endereco) {
     return endereco.substr(tagSize, indexSize);
 }
 
 
-std::string Cache::getTag(std::string endereco) {
+std::string Cache::parseTag(std::string endereco) {
     return endereco.substr(0, tagSize);
 }
 
-
-std::string Cache::getOffset(std::string endereco) {
+std::string Cache::parseOffset(std::string endereco) {
     return endereco.substr(indexSize, offsetSize);
 }
 
