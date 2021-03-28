@@ -1,5 +1,6 @@
 #define BLOCKS 256
 #define BLOCKS_WORDS 4
+#define OFFSET_BITS 2
 #define BLOCKS_BITS 12
 #include "memory.h"
 
@@ -118,8 +119,7 @@ int Cache::binaryToDecimal(std::string binaryNumber) {
 }
 
 std::string Cache::decimalToBinary(int decimal) {
-    const int bits = log2(BLOCKS_WORDS);
-    return std::bitset<bits>(decimal).to_string();
+    return std::bitset<OFFSET_BITS>(decimal).to_string();
 }
 
 void Cache::print() {
