@@ -16,6 +16,11 @@ public:
         indexSize =  log2(BLOCKS);
         offsetSize = log2(BLOCKS_WORDS);
         tagSize =  BLOCKS_BITS - indexSize - offsetSize;
+
+        hits = 0;
+        misses = 0;
+        reads = 0;
+        writes = 0;
     }
     
     std::string read(std::string endereco);
